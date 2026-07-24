@@ -9,18 +9,11 @@
 
 
 int main(){
-	sf::RenderWindow window(sf::VideoMode(500, 500), "SFML app");
+	sf::RenderWindow window(sf::VideoMode(1024, 720), "SFML app");
 
-#pragma region imgui
+#pragma region imgui //buscar info sobre este #pragma
 	ImGui::SFML::Init(window);
-	//you can use whatever imgui theme you like!
-	//ImGui::StyleColorsDark();				
-	//imguiThemes::yellow();
-	//imguiThemes::gray();
-	imguiThemes::green();
-	//imguiThemes::red();
-	//imguiThemes::gray();
-	//imguiThemes::embraceTheDarkness();
+	imguiThemes::gray(); //Color del fondo donde está el texto
 
 	ImGuiIO &io = ImGui::GetIO(); (void)io;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
@@ -32,9 +25,11 @@ int main(){
 	//style.Colors[ImGuiCol_DockingEmptyBg].w = 0.f;
 #pragma endregion
 
-	sf::CircleShape shape(100.f);
 	//window.setVerticalSyncEnabled(true);
+	
+	sf::CircleShape shape(100.f);
 	shape.setFillColor(sf::Color::Green);
+	
 	sf::Clock clock;
 	while (window.isOpen()){
 		sf::Event event;
@@ -59,22 +54,23 @@ int main(){
 
 	#pragma region imgui
 		ImGui::SFML::Update(window, deltaTime);
-
 		ImGui::PushStyleColor(ImGuiCol_WindowBg, {});
 		ImGui::PushStyleColor(ImGuiCol_DockingEmptyBg, {});
 		ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 		ImGui::PopStyleColor(2);
 	#pragma endregion
-		ImGui::Begin("Hello, world!");
-		ImGui::Button("Look at this pretty button!");
-		ImGui::Text("Hello!");
+
+		ImGui::Begin("Persona");
+		ImGui::Text("Texto de ejemplo.");
 		ImGui::End();
 		//game code....
 		window.clear();
 		window.draw(shape);
+	
 	#pragma region imgui
 		ImGui::SFML::Render(window);
 	#pragma endregion
+	
 		window.display();
 	}
 
