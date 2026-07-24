@@ -9,7 +9,7 @@
 
 
 int main(){
-	sf::RenderWindow window(sf::VideoMode(500, 500), "SFML works!");
+	sf::RenderWindow window(sf::VideoMode(500, 500), "SFML app");
 
 #pragma region imgui
 	ImGui::SFML::Init(window);
@@ -38,26 +38,21 @@ int main(){
 	sf::Clock clock;
 	while (window.isOpen()){
 		sf::Event event;
-		while (window.pollEvent(event)){
-			
-		#pragma region imgui
-			ImGui::SFML::ProcessEvent(window, event);
-		#pragma endregion
-
-
-			if (event.type == sf::Event::Closed)
-				window.close();
-			else if (event.type == sf::Event::Resized){
-				// Adjust the viewport when the window is resized
-				sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
-				window.setView(sf::View(visibleArea));
-			}
+		while (window.pollEvent(event)){		
+			#pragma region imgui
+				ImGui::SFML::ProcessEvent(window, event);
+			#pragma endregion
+				if (event.type == sf::Event::Closed)
+					window.close();
+				else if (event.type == sf::Event::Resized){
+					// Adjust the viewport when the window is resized
+					sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
+					window.setView(sf::View(visibleArea));
+				}
 		}
-
 		//calculate the delta time
 		sf::Time deltaTime = clock.restart();
 		float deltaTimeSeconds = deltaTime.asSeconds();
-
 		//make sure delta time stays within normal bounds, like between one FPS and zero FPS
 		deltaTimeSeconds = std::min(deltaTimeSeconds, 1.f);
 		deltaTimeSeconds = std::max(deltaTimeSeconds, 0.f);
