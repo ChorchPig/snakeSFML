@@ -16,8 +16,6 @@ constexpr int LIM_DER = 20;
 
 constexpr int CELL_SIZE = 32;
 
-void goToXY(int x, int y);
-void ocultarCursor();
 void imprimirLimites(sf::RenderWindow &window);
 void imprimirPuntaje(int puntos);
 int leerMejorPuntaje();
@@ -38,11 +36,11 @@ struct Segmento {
 class Manzana {
     int coordX, coordY;
 public:
-    Manzana(int _xInicial, int _yInicial);
+    Manzana(int _x, int _y) : coordX(_x), coordY(_y) {}
     int getCoordX() const;
     int getCoordY() const;
     void reubicar(const std::vector<Segmento>&snake);
-    void imprimir();
+    void imprimir(sf::RenderWindow &window);
 };
 
 class Serpiente {

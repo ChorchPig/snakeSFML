@@ -14,6 +14,7 @@ using namespace std;
 int main(){
 	sf::RenderWindow window(sf::VideoMode(1024, 720), "SFML app");
 	Serpiente snake;
+	Manzana apple((LIM_IZQ+LIM_DER)/2, (LIM_SUP+LIM_INF)/2 + 4);
 	#pragma region imgui
 		ImGui::SFML::Init(window);
 		imguiThemes::gray();
@@ -63,6 +64,7 @@ int main(){
 		//game code....
 		window.clear();
 		imprimirLimites(window);
+		apple.imprimir(window);
 		snake.imprimirCuerpo(window);
 	
 	#pragma region imgui
@@ -97,18 +99,31 @@ void imprimirLimites(sf::RenderWindow &window){
 }
 
 Serpiente::Serpiente(){
-    for(int i=0; i<4; i++){
+    for(int i=0; i<3; i++){
         cuerpo.emplace_back((LIM_IZQ+LIM_DER)/2, (LIM_SUP+LIM_INF)/2 - i);
     }
     directionX=1;
     directionY=0;
 }
 
-void Serpiente::imprimirCuerpo(sf::RenderWindow &window){ //actualmente no imprime en el lugar correcto
+void Serpiente::imprimirCuerpo(sf::RenderWindow &window){
 	sf::RectangleShape cell(sf::Vector2f(CELL_SIZE, CELL_SIZE));
 	cell.setFillColor(sf::Color::Blue);
 	for(int i=0; i<cuerpo.size(); i++){
-		cell.setPosition(cuerpo[i].y, cuerpo[i].x);
+		cell.setPosition(
+			cuerpo[i].y * CELL_SIZE, 
+			cuerpo[i].x * CELL_SIZE
+		);
 		window.draw(cell);
 	}
+}
+
+void Manzana::imprimir(sf::RenderWindow &window){
+	sf::CircleShape apple (CELL_SIZE/2);
+	apple.setFillColor(sf::Color::Red);
+	apple.setPosition(
+		coordY * CELL_SIZE, 
+		coordX * CELL_SIZE
+	);
+	window.draw(apple);
 }
