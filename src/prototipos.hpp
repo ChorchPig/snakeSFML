@@ -50,7 +50,7 @@ public:
     Serpiente();
     void imprimirCuerpo(sf::RenderWindow &window);
     void mover(bool crecer);
-    void cambiarDireccion(char tecla);
+    void cambiarDireccion(int nuevoX, int nuevoY);
     bool choque() const;
     bool vaAComer(const Manzana& manzana) const;
     const std::vector<Segmento>& getCuerpo() const;

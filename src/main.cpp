@@ -13,8 +13,11 @@ using namespace std;
 
 int main(){
 	sf::RenderWindow window(sf::VideoMode(1024, 720), "SFML app");
+	window.setFramerateLimit(60);
+	
 	Serpiente snake;
-	Manzana apple((LIM_IZQ+LIM_DER)/2, (LIM_SUP+LIM_INF)/2 + 4);
+	Manzana apple((LIM_IZQ+LIM_DER)/2 + 4, (LIM_SUP+LIM_INF)/2);
+	
 	#pragma region imgui
 		ImGui::SFML::Init(window);
 		imguiThemes::gray();
@@ -29,8 +32,9 @@ int main(){
 		//style.Colors[ImGuiCol_DockingEmptyBg].w = 0.f;
 	#pragma endregion
 
-	//window.setVerticalSyncEnabled(true);	
 	sf::Clock clock;
+	float timer=0.f;
+	const float moveInterval=0.15f;
 	while (window.isOpen()){
 		sf::Event event;
 		while (window.pollEvent(event)){		
@@ -40,13 +44,35 @@ int main(){
 				
 			if (event.type == sf::Event::Closed)
 					window.close();
+				else if (event.type == sf::Event::KeyPressed)
+				{
+					switch (event.key.code){
+					case sf::Keyboard::Up :
+						snake.cambiarDireccion(0, -1);
+						break;
+
+					case sf::Keyboard::Down :
+						snake.cambiarDireccion(0, 1);
+						break;
+
+					case sf::Keyboard::Left :
+						snake.cambiarDireccion(-1, 0);
+						break;
+
+					case sf::Keyboard::Right :
+						snake.cambiarDireccion(1, 0);
+						break;
+
+					default: break;
+					}
+				}
 				else if (event.type == sf::Event::Resized){
 					// Adjust the viewport when the window is resized
 					sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
 					window.setView(sf::View(visibleArea));
 				}
+				
 		}
-		//calculate the delta time
 		sf::Time deltaTime = clock.restart();
 		float deltaTimeSeconds = deltaTime.asSeconds();
 		//make sure delta time stays within normal bounds, like between one FPS and zero FPS
@@ -61,11 +87,17 @@ int main(){
 		ImGui::PopStyleColor(2);
 	#pragma endregion
 
-		//game code....
+		//game code...
 		window.clear();
 		imprimirLimites(window);
 		apple.imprimir(window);
 		snake.imprimirCuerpo(window);
+		timer+=deltaTimeSeconds;
+		if(timer>=moveInterval && !snake.choque()){
+			timer-=moveInterval;
+			snake.mover(false);
+		}
+
 	
 	#pragma region imgui
 		ImGui::SFML::Render(window);
@@ -96,34 +128,4 @@ void imprimirLimites(sf::RenderWindow &window){
 		window.draw(cell);
 		}
 	}
-}
-
-Serpiente::Serpiente(){
-    for(int i=0; i<3; i++){
-        cuerpo.emplace_back((LIM_IZQ+LIM_DER)/2, (LIM_SUP+LIM_INF)/2 - i);
-    }
-    directionX=1;
-    directionY=0;
-}
-
-void Serpiente::imprimirCuerpo(sf::RenderWindow &window){
-	sf::RectangleShape cell(sf::Vector2f(CELL_SIZE, CELL_SIZE));
-	cell.setFillColor(sf::Color::Blue);
-	for(int i=0; i<cuerpo.size(); i++){
-		cell.setPosition(
-			cuerpo[i].y * CELL_SIZE, 
-			cuerpo[i].x * CELL_SIZE
-		);
-		window.draw(cell);
-	}
-}
-
-void Manzana::imprimir(sf::RenderWindow &window){
-	sf::CircleShape apple (CELL_SIZE/2);
-	apple.setFillColor(sf::Color::Red);
-	apple.setPosition(
-		coordY * CELL_SIZE, 
-		coordX * CELL_SIZE
-	);
-	window.draw(apple);
 }
