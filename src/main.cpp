@@ -17,7 +17,9 @@ int main(){
 	
 	Serpiente snake;
 	Manzana apple((LIM_IZQ+LIM_DER)/2 + 4, (LIM_SUP+LIM_INF)/2);
-	
+	int puntos=0, mejor=leerMejorPuntaje();
+	bool gameOver=false;
+
 	#pragma region imgui
 		ImGui::SFML::Init(window);
 		imguiThemes::gray();
@@ -35,6 +37,10 @@ int main(){
 	sf::Clock clock;
 	float timer=0.f;
 	const float moveInterval=0.15f;
+	imprimirMejorPuntaje(mejor);
+	imprimirPuntaje(puntos);
+	//Modificar estas fucniones para que muestren en la aplicación en lugar de consola
+
 	while (window.isOpen()){
 		sf::Event event;
 		while (window.pollEvent(event)){		
@@ -44,35 +50,25 @@ int main(){
 				
 			if (event.type == sf::Event::Closed)
 					window.close();
-				else if (event.type == sf::Event::KeyPressed)
-				{
-					switch (event.key.code){
-					case sf::Keyboard::Up :
-						snake.cambiarDireccion(0, -1);
-						break;
-
-					case sf::Keyboard::Down :
-						snake.cambiarDireccion(0, 1);
-						break;
-
-					case sf::Keyboard::Left :
-						snake.cambiarDireccion(-1, 0);
-						break;
-
-					case sf::Keyboard::Right :
-						snake.cambiarDireccion(1, 0);
-						break;
-
-					default: break;
-					}
+			else if (event.type == sf::Event::KeyPressed){
+				switch (event.key.code){ //problema en cambiarDirección()
+				case sf::Keyboard::Up :	
+					snake.cambiarDireccion(0, -1); break;
+				case sf::Keyboard::Down :
+					snake.cambiarDireccion(0, 1); break;
+				case sf::Keyboard::Left :
+					snake.cambiarDireccion(-1, 0); break;
+				case sf::Keyboard::Right :
+					snake.cambiarDireccion(1, 0); break;
+				default: break;
 				}
-				else if (event.type == sf::Event::Resized){
-					// Adjust the viewport when the window is resized
-					sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
-					window.setView(sf::View(visibleArea));
-				}
-				
+			}
+			else if (event.type == sf::Event::Resized){
+				sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
+				window.setView(sf::View(visibleArea));
+			}
 		}
+
 		sf::Time deltaTime = clock.restart();
 		float deltaTimeSeconds = deltaTime.asSeconds();
 		//make sure delta time stays within normal bounds, like between one FPS and zero FPS
@@ -93,39 +89,31 @@ int main(){
 		apple.imprimir(window);
 		snake.imprimirCuerpo(window);
 		timer+=deltaTimeSeconds;
-		if(timer>=moveInterval && !snake.choque()){
+		if(!gameOver && timer>=moveInterval && !snake.choque()){
 			timer-=moveInterval;
-			snake.mover(false);
+			bool crecer=snake.vaAComer(apple);
+			snake.mover(crecer);
+			if(crecer){
+				apple.reubicar(snake.getCuerpo());
+				puntos++;
+				imprimirPuntaje(puntos);
+			}
 		}
+		else if(snake.choque()){
+			gameOver=true;
+		}
+			
 
-	
 	#pragma region imgui
 		ImGui::SFML::Render(window);
 	#pragma endregion
-	
+
 		window.display();
 	}
+	guardarMejorPuntaje(puntos);
 
 #pragma region imgui
 	ImGui::SFML::Shutdown();
 #pragma endregion
 	return 0;
-}
-
-void imprimirLimites(sf::RenderWindow &window){
-	sf::RectangleShape cell(sf::Vector2f(CELL_SIZE, CELL_SIZE));
-
-	for(int i=LIM_SUP; i<LIM_INF; i++){
-		for(int j=LIM_IZQ; j<LIM_DER; j++){
-		cell.setPosition(
-			j * CELL_SIZE,
-			i * CELL_SIZE
-		);
-		if( (i%2!=0&&j%2!=0) || (i%2==0&&j%2==0) )
-			cell.setFillColor(sf::Color::Green);
-		else 
-			cell.setFillColor(sf::Color(35, 109, 42));
-		window.draw(cell);
-		}
-	}
 }

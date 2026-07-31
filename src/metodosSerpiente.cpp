@@ -34,9 +34,11 @@ void Serpiente::mover(bool crecer){
         cuerpo.pop_back();
 }
 
-void Serpiente::cambiarDireccion(int nuevoX, int nuevoY){
-    directionX=nuevoX; 
-    directionY=nuevoY;
+void Serpiente::cambiarDireccion(int nuevoX, int nuevoY){ //si se cambia la dirección muy rápido es posible que la serpiente haga un giro de 180°
+    if((directionX!=0&&directionX!=-nuevoX) || (directionY!=0&&directionY!=-nuevoY)){
+        directionX=nuevoX; 
+        directionY=nuevoY;
+    }
 }
 
 bool Serpiente::choque() const{
@@ -49,11 +51,21 @@ bool Serpiente::choque() const{
     if (sigFrame.x > LIM_DER - 1 || sigFrame.x < LIM_IZQ || sigFrame.y > LIM_INF - 1 || sigFrame.y < LIM_SUP) //colisión contra los bordes
         choque=true;
     else{ //colisión contra el cuerpo
-        for (int i=0; i<cuerpo.size(); i++) {
+        int longitud=cuerpo.size(), i=0;;
+        while(!choque && i<longitud ){
             choque=(sigFrame==cuerpo[i]);
+            i++;
         }
     }
     return choque;
+}
+
+bool Serpiente::vaAComer(const Manzana& manzana) const{
+    Segmento sigFrame = {
+        cuerpo[0].x + directionX,
+        cuerpo[0].y + directionY
+    };
+    return (sigFrame.x==manzana.getCoordX() && sigFrame.y==manzana.getCoordY());
 }
 
 const vector<Segmento> & Serpiente::getCuerpo() const{ return cuerpo; }
