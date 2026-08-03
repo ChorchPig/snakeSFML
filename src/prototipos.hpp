@@ -2,12 +2,13 @@
 #define PROTOTIPOS_H_INCLUDED
 
 #include <vector>
-
+/*
 constexpr int ARRIBA    = 72;
 constexpr int ABAJO     = 80;
 constexpr int IZQUIERDA = 75;
 constexpr int DERECHA   = 77;
 constexpr int ESC       = 27;
+*/
 
 constexpr int LIM_SUP = 4;
 constexpr int LIM_INF = 20;
@@ -17,10 +18,10 @@ constexpr int LIM_DER = 20;
 constexpr int CELL_SIZE = 32;
 
 void imprimirLimites(sf::RenderWindow &window);
-void imprimirPuntaje(int puntos);
+int imprimirPuntaje(sf::RenderWindow &window, int puntos);
 int leerMejorPuntaje();
 void guardarMejorPuntaje(int nuevoPuntaje);
-void imprimirMejorPuntaje(int mejor);
+int imprimirMejorPuntaje(sf::RenderWindow &window, int mejor);
 
 struct Segmento {
     int x, y;

@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include "prototipos.hpp"
 
 #pragma region imgui
 	#include "imgui.h"
@@ -7,9 +8,11 @@
 	#include "imguiThemes.h"
 #pragma endregion
 
-#include "prototipos.hpp"
+//Completamente funcional, faltaría mejorar la estética en todo caso
 
 using namespace std;
+
+
 
 int main(){
 	sf::RenderWindow window(sf::VideoMode(1024, 720), "SFML app");
@@ -37,10 +40,8 @@ int main(){
 	sf::Clock clock;
 	float timer=0.f;
 	const float moveInterval=0.15f;
-	imprimirMejorPuntaje(mejor);
-	imprimirPuntaje(puntos);
-	//Modificar estas fucniones para que muestren en la aplicación en lugar de consola
 
+	
 	while (window.isOpen()){
 		sf::Event event;
 		while (window.pollEvent(event)){		
@@ -96,7 +97,6 @@ int main(){
 			if(crecer){
 				apple.reubicar(snake.getCuerpo());
 				puntos++;
-				imprimirPuntaje(puntos);
 			}
 		}
 		else if(snake.choque()){
@@ -107,8 +107,9 @@ int main(){
 	#pragma region imgui
 		ImGui::SFML::Render(window);
 	#pragma endregion
-
-		window.display();
+	imprimirMejorPuntaje(window, mejor);
+	imprimirPuntaje(window, puntos);
+	window.display();
 	}
 	guardarMejorPuntaje(puntos);
 

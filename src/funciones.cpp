@@ -23,7 +23,21 @@ void imprimirLimites(sf::RenderWindow &window){
 	}
 }
 
-void imprimirPuntaje(int puntos){ cout<<"Puntaje: "<< puntos << endl; }
+int imprimirPuntaje(sf::RenderWindow &window, int puntos){ 
+    sf::Font font;
+	if (!font.loadFromFile("../resources/DejaVuSans.ttf")){
+		std::cerr << "No se pudo cargar la fuente. (Puntaje)\n";
+		return -1;
+	}
+	sf::Text texto;
+	texto.setFont(font);
+	texto.setString("Puntaje: "+std::to_string(puntos));
+	texto.setCharacterSize(15);
+	texto.setFillColor(sf::Color::White);
+	texto.setPosition(LIM_IZQ*CELL_SIZE, (LIM_SUP-1)*CELL_SIZE);
+    window.draw(texto);
+    return 0;
+}
 
 int leerMejorPuntaje() {
     ifstream file("highscore.bin", ios::binary);
@@ -46,4 +60,18 @@ void guardarMejorPuntaje(int nuevoPuntaje) {
     }
 }
 
-void imprimirMejorPuntaje(int mejor){ cout<<"Mejor: "<<mejor<<endl; }
+int imprimirMejorPuntaje(sf::RenderWindow &window, int mejor){
+    sf::Font font;
+	if (!font.loadFromFile("../resources/DejaVuSans.ttf")){
+		std::cerr << "No se pudo cargar la fuente. (High-score)\n";
+		return -1;
+	}
+	sf::Text texto;
+	texto.setFont(font);
+	texto.setString("Mejor: "+std::to_string(mejor));
+	texto.setCharacterSize(15);
+	texto.setFillColor(sf::Color::White);
+	texto.setPosition((LIM_DER-5)*CELL_SIZE, (LIM_SUP-1)*CELL_SIZE);
+    window.draw(texto);
+    return 0;
+}
